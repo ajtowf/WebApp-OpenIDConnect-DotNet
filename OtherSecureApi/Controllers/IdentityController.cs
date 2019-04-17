@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace OtherSecureApi.Controllers
@@ -6,10 +7,11 @@ namespace OtherSecureApi.Controllers
     [Authorize]
     public class IdentityController : ApiController
     {
-        // GET api/values
-        public IEnumerable<string> Get()
+        [HttpGet]
+        public IHttpActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var identity = ((ClaimsIdentity)User.Identity).Claims.Select(x => new { x.Type, x.Value });
+            return Ok(identity);
         }
     }
 }

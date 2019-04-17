@@ -1,6 +1,6 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -21,23 +21,22 @@ namespace SecureApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            try
-            {
-                //var identity = await CallApiOnBehalfOfUser();
-
-                var identity = ((ClaimsIdentity)User.Identity).Claims.Select(x => new { x.Type, x.Value });
-                return Ok(identity);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return Unauthorized();
-            }
+            var identity = await CallApiOnBehalfOfUser();
+            return Ok(identity);
         }
 
         public static async Task<string> CallApiOnBehalfOfUser()
         {
+            if (!ClaimsPrincipal.Current.FindAll("https://schemas.microsoft.com/identity/claims/scope").Any(x => x.Value.Contains("user_impersonation")))
+            {
+                throw new HttpResponseException(new HttpResponseMessage { StatusCode = HttpStatusCode.Unauthorized, ReasonPhrase = "The Scope claim does not contain 'user_impersonation' or scope claim not found" });
+            }
+
             var authContext = new AuthenticationContext(Authority, false);
+
+            // ClientId needs to be audience/target resource, can't be guid?!
+            // See https://docs.microsoft.com/sv-se/windows-server/identity/ad-fs/development/ad-fs-on-behalf-of-authentication-in-windows-server
+            // It is very important that the ida:Audience and ida:ClientID match each other
             var credential = new ClientCredential(ClientId, ClientSecret);
 
             var bootstrapContext = new System.IdentityModel.Tokens.BootstrapContext(ClaimsPrincipal.Current.Identities.First().BootstrapContext.ToString());
@@ -49,7 +48,7 @@ namespace SecureApi.Controllers
 
             var client = new HttpClient();
 
-            var requestUri = ConfigurationManager.AppSettings["ida:Resource"] + "api/identity";
+            var requestUri = $"{Resource}api/identity";
             var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenResult.AccessToken);
