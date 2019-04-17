@@ -22,13 +22,10 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Configuration;
-using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.IdentityModel.Protocols;
-using AuthenticationContext = Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext;
 
 namespace WebApp_OpenIDConnect_DotNet
 {
@@ -87,7 +84,7 @@ namespace WebApp_OpenIDConnect_DotNet
 
                         RedirectToIdentityProvider = n =>
                         {
-                            if (n.ProtocolMessage.RequestType == OpenIdConnectRequestType.LogoutRequest)
+                            if (n.ProtocolMessage.RequestType == Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType.Logout)
                             {
                                 var idTokenHint = n.OwinContext.Authentication.User.FindFirst("id_token");
                                 if (idTokenHint != null)
