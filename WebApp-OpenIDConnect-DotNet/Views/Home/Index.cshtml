@@ -1,0 +1,48 @@
+﻿@using System.IdentityModel.Tokens
+@using System.Security.Claims
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="row">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="col-md-12">
+            <h2>Please, sign in.</h2>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h2>User Identity Claims</h2>
+
+            <dl>
+                @foreach (var claim in ((ClaimsIdentity)User.Identity).Claims)
+                {
+                    <dt>@claim.Type</dt>
+                    <dd>@claim.Value</dd>
+                }
+            </dl>
+        </div>
+
+        var encodedAccessToken = ClaimsPrincipal.Current.FindFirst(x => x.Type == "access_token").Value;
+        var encodedIdToken = ClaimsPrincipal.Current.FindFirst(x => x.Type == "id_token").Value;
+        var accessToken = new JwtSecurityToken(encodedAccessToken);
+        var idToken = new JwtSecurityToken(encodedIdToken);
+
+        <div class="col-md-12">
+            <h2>Decoded id_token</h2>
+            <pre>
+                @JsonConvert.SerializeObject(idToken.Claims.Select(x => new { x.Type, x.Value }), Formatting.Indented)
+            </pre>
+        </div>
+        <div class="col-md-12">
+            <h2>Decoded access_token</h2>
+            <pre>
+                @JsonConvert.SerializeObject(accessToken.Claims.Select(x => new { x.Type, x.Value }), Formatting.Indented)
+            </pre>
+        </div>
+    }
+</div>

@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Secure Page";
+}
+
+
+<div class="row">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="col-md-12">
+            <h2>Please, sign in.</h2>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h2>Calling API on behalf of user</h2>
+            <p>Response:</p>
+            <pre>
+                @ViewBag.SecureData
+            </pre>
+        </div>
+    }
+</div>
