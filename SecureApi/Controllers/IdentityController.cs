@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json;
 
 namespace SecureApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace SecureApi.Controllers
             return Ok(identity);
         }
 
-        public static async Task<string> CallApiOnBehalfOfUser()
+        public static async Task<object> CallApiOnBehalfOfUser()
         {
             if (!ClaimsPrincipal.Current.FindAll("https://schemas.microsoft.com/identity/claims/scope").Any(x => x.Value.Contains("user_impersonation")))
             {
@@ -57,7 +58,8 @@ namespace SecureApi.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                return content;
+                var claimsIdentity = JsonConvert.DeserializeObject<object>(content);
+                return claimsIdentity;
             }
 
             return "Unsuccessful OBO operation : " + response.ReasonPhrase;
