@@ -1,23 +1,6 @@
-## Introduction
+## Overview
 
 This sample implements an authentication flow where a user signs into a MVC application which then is accessing a secure web service. That web service will then act on behalf of the authenticated user to get an access token and access another secure web service.
-
-### Deployed Environment
- - https://mvc-application.azurewebsites.net (MAIN entry)
- - https://secure-webapi.azurewebsites.net (answers on /api/identity)
- - https://other-secure-webapi.azurewebsites.net (answers on /api/identity)
-
-#### Credentials
- - User: TLAB\john
- - Pass: ]u(z\Ftq8;En`*a#
-
-or
-
- - User: TLAB\jane
- - Pass: Be3Za73p`K\[U_4M
-   
-
-## Overview
 
 ![alt text](https://github.com/ajtowf/WebApp-OpenIDConnect-DotNet/raw/master/ReadmeFiles/overview.png "Architecture overview")
 
@@ -31,3 +14,17 @@ Below is the authentication flow that the sample will achieve
  6. Secure WebAPI service provides the access token to the AD FS token end point and requests access token for Other Secure WebAPI on-behalf-of the authenticated user
  7. AD FS returns access token for Other Secure WebAPI to Secure WebAPI acting as client
  8. Secure WebAPI uses the access token provided by AD FS in step 7 to access the Other Secure WebAPI as client and perform the necessary functions
+
+ ### Deployed Environment
+ - https://mvc-application.azurewebsites.net (MAIN entry)
+ - https://secure-webapi.azurewebsites.net (answers on /api/identity)
+ - https://other-secure-webapi.azurewebsites.net (answers on /api/identity)
+
+#### Credentials
+ - User: TLAB\john
+ - Pass: ]u(z\Ftq8;En`*a#
+
+or
+
+ - User: TLAB\jane
+ - Pass: Be3Za73p`K\[U_4M
