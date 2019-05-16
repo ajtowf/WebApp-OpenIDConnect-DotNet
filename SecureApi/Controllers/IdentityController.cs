@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
@@ -24,6 +25,14 @@ namespace SecureApi.Controllers
         {
             var identity = await CallApiOnBehalfOfUser();
             return Ok(identity);
+        }
+
+        [HttpGet]
+        [Route("api/SecureApplicationCallEndpoint")]
+        public IHttpActionResult SecureApplicationCallEndpoint()
+        {
+            var currentContext = HttpContext.Current.GetOwinContext();
+            return Ok(currentContext.Authentication.User.Claims.Select(x => new { x.Type, x.Value }));
         }
 
         public static async Task<object> CallApiOnBehalfOfUser()
